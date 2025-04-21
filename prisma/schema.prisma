@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -12,4 +6,90 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(uuid())
+  name       String
+  clientId   String?  @unique
+  email      String   @unique
+  password   String
+  role       UserType
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  client     Client?  @relation("UserClient")
+}
+
+model Client {
+  id         String   @id @default(uuid())
+  userId     String   @unique
+  name       String
+  contact    String
+  address    String
+  status     Boolean
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user       User     @relation("UserClient", fields: [userId], references: [id])
+  orders     Order[]
+}
+
+model Product {
+  id          String          @id @default(uuid())
+  name        String
+  description String
+  price       Float
+  stock       Int
+  created_at  DateTime        @default(now())
+  updated_at  DateTime        @updatedAt
+
+  items       ProductOrder[]  // <- relação definida aqui
+  orders      Order[]         // <- relação com pedidos diretos
+}
+
+model Order {
+  id          String         @id @default(uuid())
+  clientId    String
+  productId   String
+  status      OrderStatus
+  order_date  DateTime       @default(now())
+  total       Decimal
+
+  client      Client         @relation(fields: [clientId], references: [id])
+  product     Product        @relation(fields: [productId], references: [id])
+  items       ProductOrder[]
+}
+
+model ProductOrder {
+  id         String   @id @default(uuid())
+  orderId    String
+  productId  String
+  quantity   Int
+  unitPrice  Decimal
+  subtotal   Decimal
+
+  order      Order    @relation(fields: [orderId], references: [id])
+  product    Product  @relation(fields: [productId], references: [id])
+}
+
+model SalesReport {
+  id           String   @id @default(uuid())
+  period       DateTime
+  totalSales   Decimal
+  productsSold Int
+  filePath     String
+}
+
+enum UserType {
+  ADMIN
+  CLIENT
+}
+
+enum OrderStatus {
+  RECIVED
+  IN_PROGRESS
+  DISPATCHED
+  DELIVERED
+  CANCELED
 }
