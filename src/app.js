@@ -1,8 +1,33 @@
 const express = require('express');
-const routes = require('./routes');
+const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
+const userRoutes = require('./routes/user.routes');
+const productRoutes = require('./routes/product.routes');
+const orderRoutes = require('./routes/order.routes');
+const cartRoutes = require('./routes/cart.routes');
+
 const app = express();
 
+app.use(cors());
 app.use(express.json());
-app.use('/api', routes);
+
+// Documentação da API
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+app.get('/', (req, res) => {
+  res.send('API de E-commerce');
+});
+// Rotas
+app.use('/users', userRoutes);
+app.use('/products', productRoutes);
+app.use('/orders', orderRoutes);
+app.use('/cart', cartRoutes);
+
+// Middleware de erro global
+app.use((err, req, res, next) => {
+  console.error(err);
+  return res.status(500).json({ error: 'Erro interno do servidor' });
+});
 
 module.exports = app;
