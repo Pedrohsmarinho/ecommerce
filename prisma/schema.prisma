@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -9,76 +8,89 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  name       String
-  clientId   String?  @unique
-  email      String   @unique
-  password   String
-  role       UserType
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-  client     Client?  @relation("UserClient")
+  id                String    @id @default(uuid())
+  name              String
+  email             String    @unique
+  password          String
+  type              UserType
+  emailVerified     Boolean   @default(false)
+  emailVerifyToken  String?
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  client            Client?
 }
 
 model Client {
   id         String   @id @default(uuid())
   userId     String   @unique
-  name       String
+  fullName   String
   contact    String
   address    String
-  status     Boolean
+  status     Boolean  @default(true)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  user       User     @relation("UserClient", fields: [userId], references: [id])
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   orders     Order[]
 }
 
 model Product {
-  id          String          @id @default(uuid())
+  id          String         @id @default(uuid())
   name        String
   description String
-  price       Float
+  price       Decimal       @db.Decimal(10, 2)
   stock       Int
-  created_at  DateTime        @default(now())
-  updated_at  DateTime        @updatedAt
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
 
-  items       ProductOrder[]  // <- relação definida aqui
-  orders      Order[]         // <- relação com pedidos diretos
+  orderItems  OrderItem[]
 }
 
 model Order {
-  id          String         @id @default(uuid())
+  id          String      @id @default(uuid())
   clientId    String
-  productId   String
-  status      OrderStatus
-  order_date  DateTime       @default(now())
-  total       Decimal
+  status      OrderStatus @default(RECEIVED)
+  orderDate   DateTime    @default(now())
+  total       Decimal     @db.Decimal(10, 2)
+  created_at  DateTime    @default(now())
+  updated_at  DateTime    @updatedAt
 
-  client      Client         @relation(fields: [clientId], references: [id])
-  product     Product        @relation(fields: [productId], references: [id])
-  items       ProductOrder[]
+  client      Client      @relation(fields: [clientId], references: [id])
+  items       OrderItem[]
 }
 
-model ProductOrder {
-  id         String   @id @default(uuid())
-  orderId    String
-  productId  String
-  quantity   Int
-  unitPrice  Decimal
-  subtotal   Decimal
+model OrderItem {
+  id            String   @id @default(uuid())
+  orderId       String
+  productId     String
+  quantity      Int
+  unitPrice     Decimal  @db.Decimal(10, 2)
+  subtotal      Decimal  @db.Decimal(10, 2)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
 
-  order      Order    @relation(fields: [orderId], references: [id])
-  product    Product  @relation(fields: [productId], references: [id])
+  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product       Product  @relation(fields: [productId], references: [id])
 }
 
 model SalesReport {
   id           String   @id @default(uuid())
   period       DateTime
-  totalSales   Decimal
+  totalSales   Decimal  @db.Decimal(10, 2)
   productsSold Int
   filePath     String
+  created_at   DateTime @default(now())
+}
+
+model Cart {
+  id         String   @id @default(uuid())
+  clientId   String
+  productId  String
+  quantity   Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@unique([clientId, productId])
 }
 
 enum UserType {
@@ -87,9 +99,9 @@ enum UserType {
 }
 
 enum OrderStatus {
-  RECIVED
-  IN_PROGRESS
+  RECEIVED
+  IN_PREPARATION
   DISPATCHED
   DELIVERED
-  CANCELED
+  CANCELLED
 }
