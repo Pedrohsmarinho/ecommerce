@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+	  {
+		"label": "start-database",
+		"type": "shell",
+		"command": "docker-compose",
+		"args": [
+		  "up",
+		  "-d"
+		],
+		"problemMatcher": []
+	  }
+	]
+  }
