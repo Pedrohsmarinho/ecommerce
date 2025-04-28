@@ -8,4 +8,4 @@ userRouter.post('/register', UserController.register);
 userRouter.get('/verify-email', UserController.verifyEmail);
 userRouter.post('/login', UserController.authenticate);
 
-module.exports = userRouter; 
+module.exports = userRouter;
