@@ -1,4 +1,5 @@
-const bcrypt = require('bcryptjs');
+const UserRepository = require('../repositories/userRepository');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const prisma = require('../config/database');
