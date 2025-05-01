@@ -11,8 +11,8 @@ productRouter.get('/:id', ProductController.findById);
 productRouter.use(authMiddleware);
 productRouter.use(adminMiddleware);
 
-productRouter.post('/', ProductController.create);
+productRouter.post('/create', ProductController.create);
 productRouter.put('/:id', ProductController.update);
 productRouter.delete('/:id', ProductController.delete);
 
-module.exports = productRouter; 
+module.exports = productRouter;

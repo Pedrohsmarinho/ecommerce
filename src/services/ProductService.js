@@ -10,15 +10,15 @@ class ProductService {
         stock: data.stock
       }
     });
+    console.log("🚀 ~ ProductService ~ create ~ product:", product)
 
     return product;
   }
 
   async findAll(query = {}) {
     const { search, minPrice, maxPrice, inStock } = query;
-    
     const where = {};
-    
+
     if (search) {
       where.OR = [
         { name: { contains: search, mode: 'insensitive' } },

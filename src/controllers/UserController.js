@@ -11,6 +11,7 @@ class UserController {
         type: user.type
       });
     } catch (error) {
+      console.log("🚀 ~ UserController ~ register ~ error:", error)
       return res.status(400).json({ error: error.message });
     }
   }
@@ -29,6 +30,9 @@ class UserController {
     try {
       const { email, password } = req.body;
       const auth = await UserService.authenticate(email, password);
+      if (!auth) {
+        return res.status(401).json({ error: 'Email ou senha inválidos' });
+      }
       return res.json(auth);
     } catch (error) {
       return res.status(401).json({ error: error.message });
