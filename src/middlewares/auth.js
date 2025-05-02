@@ -27,4 +27,4 @@ function adminMiddleware(req, res, next) {
   return next();
 }
 
-module.exports = { authMiddleware, adminMiddleware }; 
+module.exports = { authMiddleware, adminMiddleware };

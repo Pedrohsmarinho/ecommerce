@@ -17,4 +17,4 @@ orderRouter.put('/:id/status', adminMiddleware, OrderController.updateStatus);
 orderRouter.get('/reports/sales', adminMiddleware, OrderController.generateReport);
 orderRouter.get('/reports/:id/download', adminMiddleware, OrderController.downloadReport);
 
-module.exports = orderRouter; 
+module.exports = orderRouter;

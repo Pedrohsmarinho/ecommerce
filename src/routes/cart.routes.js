@@ -13,4 +13,4 @@ cartRouter.put('/:productId', CartController.updateQuantity);
 cartRouter.delete('/:productId', CartController.removeItem);
 cartRouter.delete('/', CartController.clear);
 
-module.exports = cartRouter; 
+module.exports = cartRouter;
