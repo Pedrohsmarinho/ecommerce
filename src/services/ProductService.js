@@ -10,13 +10,13 @@ class ProductService {
         stock: data.stock
       }
     });
-    console.log("🚀 ~ ProductService ~ create ~ product:", product)
 
     return product;
   }
 
   async findAll(query = {}) {
     const { search, minPrice, maxPrice, inStock } = query;
+
     const where = {};
 
     if (search) {
@@ -85,8 +85,8 @@ class ProductService {
       throw new Error('Quantidade insuficiente em estoque');
     }
 
-    const updatedStock = operation === 'decrease' 
-      ? product.stock - quantity 
+    const updatedStock = operation === 'decrease'
+      ? product.stock - quantity
       : product.stock + quantity;
 
     return await prisma.product.update({
@@ -96,4 +96,4 @@ class ProductService {
   }
 }
 
-module.exports = new ProductService(); 
+module.exports = new ProductService();

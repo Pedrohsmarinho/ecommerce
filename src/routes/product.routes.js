@@ -11,7 +11,7 @@ productRouter.get('/:id', ProductController.findById);
 productRouter.use(authMiddleware);
 productRouter.use(adminMiddleware);
 
-productRouter.post('/createProduct', ProductController.create);
+productRouter.post('/', ProductController.create);
 productRouter.put('/:id', ProductController.update);
 productRouter.delete('/:id', ProductController.delete);
 
